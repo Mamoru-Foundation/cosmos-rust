@@ -1,12 +1,13 @@
 //! Transaction signing key
 
-use crate::{
-    crypto::{secp256k1::Signature, PublicKey},
-    ErrorReport, Result,
-};
 use ecdsa::signature::{Keypair, Signer};
 use k256::ecdsa::VerifyingKey;
 use rand_core::OsRng;
+
+use crate::{
+    crypto::{PublicKey, secp256k1::Signature},
+    ErrorReport, Result,
+};
 
 /// ECDSA/secp256k1 signing key (i.e. private key)
 ///
@@ -107,6 +108,6 @@ impl From<&bip32::XPrv> for SigningKey {
 ///
 /// Note that this trait is bounded on [`ecdsa::signature::Signer`], which is
 /// what is actually used to produce a signature for a given message.
-pub trait EcdsaSigner: Signer<Signature> + Keypair<VerifyingKey = VerifyingKey> {}
+pub trait EcdsaSigner: Signer<Signature> + Keypair<VerifyingKey=VerifyingKey> + Sync + Send {}
 
-impl<T> EcdsaSigner for T where T: Signer<Signature> + Keypair<VerifyingKey = VerifyingKey> {}
+impl<T> EcdsaSigner for T where T: Signer<Signature> + Keypair<VerifyingKey=VerifyingKey> + Sync + Send {}
